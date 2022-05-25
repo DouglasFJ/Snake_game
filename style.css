@@ -10,8 +10,6 @@ body {
     background-image: -moz-linear-gradient(to bottom, #70ebdb, #549b9b);
 }
 #snake_game {
-    width: 500px;
-    height: 500px;
     border: 1px solid rgb(165, 165, 165);
 
     background-color: white;
@@ -20,7 +18,4 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-.line {
-    display: flex;
 }

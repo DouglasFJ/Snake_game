@@ -8,15 +8,23 @@ function matriz_jogo(x, y){
     }
     return matriz
 }
-function atualizar_matriz(coord, mtrz){
+function atualizar_matriz(coord_snake, coord_food, mtrz){
     for(let i in mtrz){
         for(let c in mtrz[i]){        
             mtrz[i][c] = 0
         }
     }
     for(let i in coord){
-        matriz[coord[i].x][coord[i].y] = 1
+        mtrz[coord_snake[i].x][coord_snake[i].y] = 1
     }
+    mtrz[coord_food.x][coord_food.y] = 2
+}
+function box_size(width, mtrz){
+    let size = width / mtrz.length
+    return size
+}
+function atualizar_tela(){
+
 }
 class snake {
     size = 2
@@ -26,12 +34,8 @@ class snake {
     ]
     speed = 2
     direction = 'right'
-    constructor(color){
+    constructor(color, ){
         this.color = color
-    }
-    get_coord(){
-        let copy = JSON.parse(JSON.stringify(this.body_coord))
-        return copy
     }
     switch_direction(new_direction){
         if(new_direction != this.direction){
@@ -107,21 +111,65 @@ class snake {
     }
 }
 
-var jogo_html = document.querySelector('#snake_game')
-var matriz = matriz_jogo(11, 11)
+var jogo_html = document.getElementById('snake_game')
+var contexto_jogo = jogo_html.getContext('2d')
+var matriz = matriz_jogo(17, 17)
+var bloco = box_size(jogo_html.width, matriz)
 var cobra = new snake('green')
-for (let line in matriz){
-    linha = document.createElement('div')
-    linha.id = `line_${line}`
-    linha.className = 'line'
-    linha.style.height = `${500 / matriz.length}px`
-    for (let col in matriz[line]){
-        coluna = document.createElement('div')
-        coluna.id = `col_${col}`
-        coluna.className = 'column'
-        coluna.style.height = `${500 / matriz.length}px`
-        //coluna.style.width = `${500 / matriz[0].length}px`
-        linha.appendChild(coluna)
+var food = {
+    x: 5,
+    y: 8
+}
+document.addEventListener('keydown', update)
+function update(event){
+    if (event.keyCode == 37 && cobra.direction != 'right') cobra.switch_direction('left');
+    if (event.keyCode == 38 && cobra.direction != 'down') cobra.switch_direction('up');
+    if (event.keyCode == 39 && cobra.direction != 'left') cobra.switch_direction('right');
+    if (event.keyCode == 40 && cobra.direction != 'up') cobra.switch_direction('down');
+}
+
+function construct_window(){
+    contexto_jogo.fillStyle = 'white'
+    contexto_jogo.fillRect(0, 0, 500, 500)
+    contexto_jogo.stroke()
+    for(let cord in cobra.body_coord){
+        contexto_jogo.fillStyle = cobra.color
+        contexto_jogo.fillRect(bloco * cobra.body_coord[cord].y,bloco * cobra.body_coord[cord].x, bloco, bloco)
+        contexto_jogo.stroke()
     }
-    jogo_html.appendChild(linha)    
+    contexto_jogo.fillStyle = 'red'
+    contexto_jogo.fillRect(bloco * food.y,bloco * food.x, bloco, bloco)
+    contexto_jogo.stroke()
+}
+function check_action(){
+    if(cobra.body_coord[0].x > matriz.length - 1 || cobra.body_coord[0].x < 0 || cobra.body_coord[0].y > matriz[0].length - 1 || cobra.body_coord[0].y < 0){
+        clearInterval(game)
+        alert('Game Over')
+    }
+    if(cobra.body_coord[0].x === food.x && cobra.body_coord[0].y === food.y){
+        cobra.eat()
+        food.x = Math.floor(Math.random() * matriz.length)
+        food.y = Math.floor(Math.random() * matriz.length)
+        while(cobra.body_coord[0].x === food.x && cobra.body_coord[0].y === food.y){
+            food.x = Math.floor(Math.random() * matriz.length)
+            food.y = Math.floor(Math.random() * matriz.length)
+        }
+        
+    }
+    for(let i in cobra.body_coord){
+        if(i!= 0 && cobra.body_coord[0].x === cobra.body_coord[i].x && cobra.body_coord[0].y === cobra.body_coord[i].y){
+            clearInterval(game)
+            alert('Game Over')
+        }
+    }
+}
+
+function start_loop(){
+    cobra.walk()
+    check_action()
+    construct_window()
+}
+
+function start_game(){
+    var game = setInterval(start_loop, 200)
 }
