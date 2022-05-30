@@ -8,8 +8,34 @@
     <title>Snake game</title>
 </head>
 <body>
-    <button onclick="start_game()">Start</button>
-    <canvas id="snake_game" width="500" height="500">O navegador não suporta o jogo</canvas>
-    <script src="script.js"></script>
+    <div class="credits">
+        SNAKE GAME by <a href="https://douglasfj.github.io/Portifolio_DouglasFJ/" target="_blank">DouglasFJ</a>
+    </div>
+    <header>
+        <button id="START">START</button>
+        <a href="index.html" id="RESTART">RESTART</a>
+        <div>
+            <div class="size">
+                <p>Size:</p>
+                <button id="15x">15 x 15</button>
+                <button id="31x">31 x 31</button>
+            </div>
+            <div class="colors">
+                <p>colors:</p>
+                <button class='btncolor #FA4400' id="laranja"></button>
+                <button class='btncolor #A65F0A' id="marrom"></button>
+                <button class='btncolor #34F523' id="verde-claro"></button>
+                <button class='btncolor #7D28A8' id="roxo"></button>
+                <button class='btncolor #F5165C' id="rosa-choque"></button>
+                <button class='btncolor #20F5EA' id="azul-marinho"></button>
+            </div>
+        </div>
+    </header>
+    <main>
+        <canvas id="snake_game" width="500" height="500">O navegador não suporta o jogo</canvas>
+    </main>
+    
+    <script src="scripts/game.js"></script>
+    
 </body>
 </html>

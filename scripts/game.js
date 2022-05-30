@@ -1,3 +1,5 @@
+
+
 function matriz_jogo(x, y){
     let matriz = []
     for(let i=0;i<x; i++){
@@ -23,9 +25,7 @@ function box_size(width, mtrz){
     let size = width / mtrz.length
     return size
 }
-function atualizar_tela(){
 
-}
 class snake {
     size = 2
     body_coord = [
@@ -34,8 +34,10 @@ class snake {
     ]
     speed = 2
     direction = 'right'
-    constructor(color, ){
+    constructor(color, posX){
         this.color = color
+        this.body_coord[0].x = posX
+        this.body_coord[1].x = posX
     }
     switch_direction(new_direction){
         if(new_direction != this.direction){
@@ -110,16 +112,58 @@ class snake {
         } 
     }
 }
-
+//------------------------------------------------------------
 var jogo_html = document.getElementById('snake_game')
 var contexto_jogo = jogo_html.getContext('2d')
-var matriz = matriz_jogo(17, 17)
+var matriz = matriz_jogo(21, 21)
+
 var bloco = box_size(jogo_html.width, matriz)
-var cobra = new snake('green')
+var cobra = new snake('green', (Math.floor(matriz.length/2)))
 var food = {
-    x: 5,
-    y: 8
+    x: (Math.floor(matriz.length/2)),
+    y: (matriz[0].length - 2)
 }
+//-------------------------------------------------------------
+
+var btn_start = document.getElementById("START")
+btn_start.addEventListener('click', start_game)
+var btn_restart = document.getElementById("RESTART")
+
+//--------------------------------------------------
+var btn_size15x = document.getElementById("15x")
+btn_size15x.addEventListener('click', newsize)
+var btn_size31x = document.getElementById("31x")
+btn_size31x.addEventListener('click', newsize)
+function newsize(event){
+    if(event.path[0].id == '15x'){
+        switchsizecoord(15)
+    }else if(event.path[0].id == '31x'){
+        switchsizecoord(31)
+    }
+    alert('tamanho trocado')
+}
+function switchsizecoord(size){
+    matriz = matriz_jogo(size, size)
+    bloco = box_size(jogo_html.width, matriz)
+    food = {
+        x: (Math.floor(matriz.length/2)),
+        y: (matriz[0].length - 2)
+    }
+    cobra.body_coord[0].x = (Math.floor(matriz.length/2))
+    cobra.body_coord[1].x = (Math.floor(matriz.length/2))
+}
+//--------------------------------------------------
+
+//---------botoes cores --------------------------
+var botoes = document.getElementsByClassName('btncolor')
+for(let btn=0; btn<6 ; btn++){
+    botoes[btn].addEventListener('click', ()=>{
+        cobra.color = botoes[btn].classList[1]
+        alert('cor trocada')   
+    })
+}
+//------------------------------------------------
+
 document.addEventListener('keydown', update)
 function update(event){
     if (event.keyCode == 37 && cobra.direction != 'right') cobra.switch_direction('left');
@@ -127,7 +171,6 @@ function update(event){
     if (event.keyCode == 39 && cobra.direction != 'left') cobra.switch_direction('right');
     if (event.keyCode == 40 && cobra.direction != 'up') cobra.switch_direction('down');
 }
-
 function construct_window(){
     contexto_jogo.fillStyle = 'white'
     contexto_jogo.fillRect(0, 0, 500, 500)
@@ -169,7 +212,9 @@ function start_loop(){
     check_action()
     construct_window()
 }
-
+game = ''
 function start_game(){
-    var game = setInterval(start_loop, 200)
-}
+    btn_start.style.display = 'none'
+    btn_restart.style.display = 'block'
+    game = setInterval(start_loop, 200)
+}//inicia o looping do jogo
